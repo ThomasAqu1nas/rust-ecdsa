@@ -85,21 +85,7 @@ impl Secp256k1Point {
         Self { x: Some(x), y: Some(y) }
     }
 
-    pub fn times_u64(&self, n: u64) -> Secp256k1Point {
-        let bits = n.to_bits();
-        let this = (*self).clone();
-        let mut res = (*self).clone();
-        for i in bits {
-            if i {
-                res = res.times_two() + this.clone();
-            } else {
-                res = res.times_two();
-            }
-        }
-        res
-    }
-
-    pub fn times(&self, n: &BigInt) -> Secp256k1Point {
+    pub fn times<T: ToBits>(&self, n: &T) -> Secp256k1Point {
         let bits = n.to_bits();
         let this = (*self).clone();
         let mut res = (*self).clone();
