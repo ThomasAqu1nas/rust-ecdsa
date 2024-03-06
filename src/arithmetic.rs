@@ -64,12 +64,12 @@ impl Modular for BigInt {
 }
 
 #[derive(Clone, Debug)]
-pub struct Secp256k1Dot {
+pub struct Secp256k1Point {
     pub x: Option<num_bigint::BigInt>,
     pub y: Option<num_bigint::BigInt>
 }
 
-impl Secp256k1Dot {
+impl Secp256k1Point {
 
     pub fn init(x: BigInt) -> Self {
         let a = Secp256k1Params::get().a;
@@ -85,7 +85,7 @@ impl Secp256k1Dot {
         Self { x: Some(x), y: Some(y) }
     }
 
-    pub fn times_u64(&self, n: u64) -> Secp256k1Dot {
+    pub fn times_u64(&self, n: u64) -> Secp256k1Point {
         let bits = n.to_bits();
         let this = (*self).clone();
         let mut res = (*self).clone();
@@ -99,7 +99,7 @@ impl Secp256k1Dot {
         res
     }
 
-    pub fn times(&self, n: &BigInt) -> Secp256k1Dot {
+    pub fn times(&self, n: &BigInt) -> Secp256k1Point {
         let bits = n.to_bits();
         let this = (*self).clone();
         let mut res = (*self).clone();
@@ -113,9 +113,9 @@ impl Secp256k1Dot {
         res
     }
 
-    pub fn times_two(&self) -> Secp256k1Dot {
-        if self.eq(&Secp256k1Dot::zero()) {
-            return Secp256k1Dot::zero();
+    pub fn times_two(&self) -> Secp256k1Point {
+        if self.eq(&Secp256k1Point::zero()) {
+            return Secp256k1Point::zero();
         }
         if let (
             Some(x), 
@@ -132,45 +132,45 @@ impl Secp256k1Dot {
             let lambda = (&lambda_1 * &lambda_2).modulus(&modulus);
             let res_x = (&lambda.clone().pow(2u8) - x - x).modulus(&modulus);
             let res_y = (&(lambda * (x - &res_x)) - y).modulus(&modulus);
-            Secp256k1Dot {
+            Secp256k1Point {
                 x: Some(res_x),
                 y: Some(res_y),
             }
         } else {
-            return Secp256k1Dot::zero();
+            return Secp256k1Point::zero();
         }
     }
 }
 
-impl Zero for Secp256k1Dot {
+impl Zero for Secp256k1Point {
     fn zero() -> Self {
-        Secp256k1Dot { x: None::<BigInt>, y: None::<BigInt> }
+        Secp256k1Point { x: None::<BigInt>, y: None::<BigInt> }
     }
 
     fn is_zero(&self) -> bool {
-        self.eq(&Secp256k1Dot { x: None::<BigInt>, y: None::<BigInt> })
+        self.eq(&Secp256k1Point { x: None::<BigInt>, y: None::<BigInt> })
     }
 }
 
-impl Default for Secp256k1Dot {
+impl Default for Secp256k1Point {
     fn default() -> Self {
         Self { x: Default::default(), y: Default::default()}
     }
 }
 
-impl PartialEq for Secp256k1Dot {
+impl PartialEq for Secp256k1Point {
     fn eq(&self, other: &Self) -> bool {
         self.x == other.x && self.y == other.y
     }
 }
 
-impl Add for Secp256k1Dot {
+impl Add for Secp256k1Point {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
         if self.eq(&rhs) {
             if self.is_zero() {
-                return Secp256k1Dot::zero();
+                return Secp256k1Point::zero();
             }
             return self.times_two();
         }
@@ -181,7 +181,7 @@ impl Add for Secp256k1Dot {
             return self;
         }
         if (self.x).eq(&rhs.x) {
-            return Secp256k1Dot {
+            return Secp256k1Point {
                 x: None,
                 y: None,
             };
@@ -196,12 +196,12 @@ impl Add for Secp256k1Dot {
             let lambda = ((b_y - a_y) * (b_x - a_x).invmod(&modulus).unwrap()).modulus(&modulus);
             let res_x = (&lambda.clone().pow(2u8) - a_x - b_x).modulus(&modulus);
             let res_y = (&lambda * &(a_x - &res_x) - a_y).modulus(&modulus);
-            Secp256k1Dot {
+            Secp256k1Point {
                 x: Some(res_x),
                 y: Some(res_y),
             }
         } else {
-            Secp256k1Dot {
+            Secp256k1Point {
                 x: None,
                 y: None,
             }
@@ -209,13 +209,13 @@ impl Add for Secp256k1Dot {
     }
 }
 
-impl<'a, 'b> Add<&'b Secp256k1Dot> for &'a Secp256k1Dot {
-    type Output = Secp256k1Dot;
+impl<'a, 'b> Add<&'b Secp256k1Point> for &'a Secp256k1Point {
+    type Output = Secp256k1Point;
 
-    fn add(self, rhs: &'b Secp256k1Dot) -> Self::Output {
+    fn add(self, rhs: &'b Secp256k1Point) -> Self::Output {
         if self.eq(rhs) {
             if self.is_zero() {
-                return Secp256k1Dot::zero();
+                return Secp256k1Point::zero();
             }
             return self.times_two();
         }
@@ -226,7 +226,7 @@ impl<'a, 'b> Add<&'b Secp256k1Dot> for &'a Secp256k1Dot {
             return self.clone();
         }
         if (self.x).eq(&rhs.x) {
-            return Secp256k1Dot {
+            return Secp256k1Point {
                 x: None,
                 y: None,
             };
@@ -241,12 +241,12 @@ impl<'a, 'b> Add<&'b Secp256k1Dot> for &'a Secp256k1Dot {
             let lambda = ((b_y - a_y) * (b_x - a_x).invmod(&modulus).unwrap()).modulus(&modulus);
             let res_x = (&lambda.clone().pow(2u8) - a_x - b_x).modulus(&modulus);
             let res_y = (&lambda * &(a_x - &res_x) - a_y).modulus(&modulus);
-            Secp256k1Dot {
+            Secp256k1Point {
                 x: Some(res_x),
                 y: Some(res_y),
             }
         } else {
-            Secp256k1Dot {
+            Secp256k1Point {
                 x: None,
                 y: None,
             }
@@ -254,29 +254,29 @@ impl<'a, 'b> Add<&'b Secp256k1Dot> for &'a Secp256k1Dot {
     }
 }
 
-impl Neg for Secp256k1Dot {
+impl Neg for Secp256k1Point {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        if self.eq(&Secp256k1Dot::zero()) {
-            return Secp256k1Dot::zero();
+        if self.eq(&Secp256k1Point::zero()) {
+            return Secp256k1Point::zero();
         }
         let modulus = Secp256k1Params::get().p;
         if let (
             Some(x),
             Some(y)
         ) = (self.x, self.y) {
-            Secp256k1Dot {
+            Secp256k1Point {
                 x: Some(x),
                 y: Some((-y).modulus(&modulus)),
             }
         } else {
-            Secp256k1Dot::zero()
+            Secp256k1Point::zero()
         }
     }
 }
 
-impl Display for Secp256k1Dot {
+impl Display for Secp256k1Point {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let (
             Some(x),
@@ -316,14 +316,13 @@ impl ToBits for BigInt {
 
 #[cfg(test)]
 mod tests {
-    use std::ops::Rem;
 
     use num_bigint::BigInt;
     use num_traits::FromPrimitive;
 
     use crate::{ecdsa::PrivateKey, secp256k1::Secp256k1Params};
 
-    use super::{Modular, Secp256k1Dot};
+    use super::Modular;
 
     #[test]
     fn test_invmod() {

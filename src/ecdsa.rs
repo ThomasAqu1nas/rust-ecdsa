@@ -1,10 +1,10 @@
-use std::ops::{Mul, Rem};
+use std::ops::Mul;
 
 use num_bigint::{BigInt, RandBigInt};
 use num_traits::{One, Zero};
 use rand::thread_rng;
 
-use crate::{arithmetic::{Modular, Secp256k1Dot}, secp256k1::Secp256k1Params};
+use crate::{arithmetic::{Modular, Secp256k1Point}, secp256k1::Secp256k1Params};
 
 #[derive(Debug, Clone, Default)]
 pub struct BigInt256Bounds(pub BigInt, pub BigInt);
@@ -27,7 +27,7 @@ impl BigInt256Bounds {
 #[derive(Debug)]
 pub struct PrivateKey(pub BigInt);
 #[derive(Debug)]
-pub struct PublicKey(pub Secp256k1Dot);
+pub struct PublicKey(pub Secp256k1Point);
 
 impl PrivateKey {
     pub fn generate() -> Self {

@@ -3,7 +3,7 @@ mod tests {
 
     use num_bigint::BigInt;
     use state_manager::{Getter, State, StateBuffer, StateManager, StateSetter, error};
-    use crate::arithmetic::{Modular, Secp256k1Dot};
+    use crate::arithmetic::{Modular, Secp256k1Point};
 
     pub struct TestStateBuffer;
     pub type BigIntTestData1 = Vec<(BigInt, BigInt, BigInt)>;

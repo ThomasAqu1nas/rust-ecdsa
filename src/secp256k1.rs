@@ -1,12 +1,12 @@
 use num_bigint::BigInt;
 use num_traits::Zero;
 
-use crate::arithmetic::Secp256k1Dot;
+use crate::arithmetic::Secp256k1Point;
 pub struct Secp256k1Params {
     pub a: BigInt,
     pub b: BigInt,
     pub p: BigInt,
-    pub g: Secp256k1Dot,
+    pub g: Secp256k1Point,
     pub n: BigInt
 }
 
@@ -22,7 +22,7 @@ impl Secp256k1Params {
                 b"fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f", 
                 16
             ).unwrap(),
-            g: Secp256k1Dot::free_dot(
+            g: Secp256k1Point::free_dot(
                     BigInt::parse_bytes(
                         b"79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", 
                         16
